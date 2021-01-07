@@ -22,6 +22,16 @@ namespace AspNetCore.Authentication.eIDEasy
             ClaimActions.MapJsonKey(ClaimTypes.Surname, "lastname");
         }
 
+        // Use this for sandbox environment, see more at https://eideasy.com/developer-documentation/sandbox/
+        public void UseSandbox()
+        {
+            AuthorizationEndpoint = EIdEasyDefaults.SBAuthorizationEndpoint;
+            TokenEndpoint = EIdEasyDefaults.SBTokenEndpoint;
+            UserInformationEndpoint = EIdEasyDefaults.SBUserInformationEndpoint;
+            ClientId = EIdEasyDefaults.SBClientId;
+            ClientSecret = EIdEasyDefaults.SBClientSecret;
+        }
+
         // See EIdEasyMethods
         public string Method { get; set; }
     }

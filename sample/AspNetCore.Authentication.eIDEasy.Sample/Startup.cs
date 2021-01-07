@@ -37,11 +37,7 @@ namespace AspNetCore.Authentication.eIDEasy.Sample
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
-                .AddEIdEasy(options =>
-                {
-                    options.ClientId = Configuration["eIDEasyClientId"];
-                    options.ClientSecret = Configuration["eIDEasyClientSecret"];
-                })
+                .AddEIdEasy(options => options.UseSandbox())
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();

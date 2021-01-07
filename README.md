@@ -20,6 +20,9 @@ public void ConfigureServices(IServiceCollection services)
         {
             options.ClientId = Configuration["eIDEasyClientId"];
             options.ClientSecret = Configuration["eIDEasyClientSecret"];
+            
+            // Use this for sandbox environment, see more at https://eideasy.com/developer-documentation/sandbox/
+            // options.UseSandbox();
         });
 }
 
