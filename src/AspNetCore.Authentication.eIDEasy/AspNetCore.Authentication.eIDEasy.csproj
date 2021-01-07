@@ -2,9 +2,25 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<PackageId>AspNetCore.Authentication.eIDEasy</PackageId>
+		<Version>1.0.0</Version>
+		<PackageDescription>eIDEasy external authentication for ASP.NET Core applications that supports ID-card, Mobile-ID and Smart-ID.</PackageDescription>
+		<PackageTags>eIDEasy;id-card;mobile-id;smartid;smart-id;authentication</PackageTags>
+		<Authors>kaupov</Authors>
+		<Company>kaupov</Company>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>eid-easy-logo-1.png</PackageIcon>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Product>AspNetCore.Authentication.eIDEasy</Product>
+		<RepositoryUrl>https://github.com/kaupov/AspNetCore.Authentication.eIDEasy</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/kaupov/AspNetCore.Authentication.eIDEasy</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Images\eid-easy-logo-1.png" Pack="true" PackagePath="\"></None>
 	</ItemGroup>
 </Project>
