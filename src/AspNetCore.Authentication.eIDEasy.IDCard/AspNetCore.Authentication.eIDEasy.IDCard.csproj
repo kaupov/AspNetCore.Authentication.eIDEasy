@@ -1,13 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <PackageId>AspNetCore.Authentication.eIDEasy.IDCard</PackageId>
+    <Version>1.0.0-alpha1</Version>
+    <PackageDescription>eIDEasy ID-card embedded external authentication for ASP.NET Core applications.</PackageDescription>
+    <PackageTags>eIDEasy;id-card;authentication</PackageTags>
+    <Authors>kaupov</Authors>
+    <Company>kaupov</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>eid-easy-logo-1.png</PackageIcon>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Product>AspNetCore.Authentication.eIDEasy.IDCard</Product>
+    <RepositoryUrl>https://github.com/kaupov/AspNetCore.Authentication.eIDEasy</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/kaupov/AspNetCore.Authentication.eIDEasy</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-
+  <ItemGroup>
+    <None Include="Images\eid-easy-logo-1.png" Pack="true" PackagePath="\"></None>
+  </ItemGroup>
 </Project>
