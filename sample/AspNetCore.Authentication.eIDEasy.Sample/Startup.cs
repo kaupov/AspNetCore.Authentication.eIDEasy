@@ -1,3 +1,4 @@
+using AspNetCore.Authentication.eIDEasy.IDCard;
 using AspNetCore.Authentication.eIDEasy.Sample.Data;
 using AspNetCore.Authentication.eIDEasy.Sample.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -38,6 +39,12 @@ namespace AspNetCore.Authentication.eIDEasy.Sample
 
             services.AddAuthentication()
                 .AddEIdEasy(options => options.UseSandbox())
+                .AddEIdEasyIdCard(options =>
+                {
+                    options.ClientId = Configuration["eIDEasy:ClientId"];
+                    options.ClientSecret = Configuration["eIDEasy:ClientSecret"];
+                    options.Country = "ee";
+                })
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();

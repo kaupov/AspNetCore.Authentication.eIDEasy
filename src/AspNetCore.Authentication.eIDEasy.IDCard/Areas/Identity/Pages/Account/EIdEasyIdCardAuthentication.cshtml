@@ -1,0 +1,58 @@
+﻿@page
+@model AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account.EIdEasyIdCardAuthentication
+@{
+    ViewData["Title"] = "ID-card authentication";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p id="id-card-progress">Authenticating with ID-card via eID Easy ...</p>
+
+<form asp-route-returnUrl="@Model.ReturnUrl" id="token-form" style="display: none" method="post">
+    <input asp-for="Input.Token"/>
+</form>
+
+<div id="id-card-error" class="alert alert-danger" role="alert">
+    <p>Authentication failed. Please make sure your ID-card reader is connected to your computer and your ID-card is properly in reader.</p>
+    <button id="id-card-retry" class="btn btn-primary">Retry</button>
+</div>
+
+<script>
+    function authenticateEIdEasyIdCard () {
+        var progressElement = document.querySelector('#id-card-progress');
+        var errorElement = document.querySelector('#id-card-error');
+
+        progressElement.classList.remove('d-none');
+        errorElement.classList.add('d-none');
+
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+            if (this.readyState === 4) {
+                console.log(this.response);
+            }
+
+            if (this.readyState === 4 && this.response.status === "OK") {
+                document.querySelector('#Input_Token').value = this.response.token;
+                document.querySelector('#token-form').submit();
+            } else {
+                errorElement.classList.remove('d-none');
+                progressElement.classList.add('d-none');
+            }
+        };
+        xhr.onerror = function () {
+            errorElement.classList.remove('d-none');
+            progressElement.classList.add('d-none');
+        };
+        xhr.open('GET', '@Model.CardUrl/api/identity/@Model.ClientId/read-card', true);
+        xhr.withCredentials = true;
+        xhr.responseType = 'json';
+        xhr.send();
+    }
+
+    var element = document.querySelector('#id-card-retry');
+    element.onclick = function () {
+        authenticateEIdEasyIdCard();
+    };
+
+    authenticateEIdEasyIdCard();
+</script>
