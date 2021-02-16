@@ -40,7 +40,7 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard
 
             if (string.IsNullOrEmpty(token))
             {
-                Context.Response.Redirect($"./EIdEasyIdCardAuthentication");
+                Context.Response.Redirect("/Identity/Account/EIdEasyIdCardAuthentication");
                 return;
             }
 
