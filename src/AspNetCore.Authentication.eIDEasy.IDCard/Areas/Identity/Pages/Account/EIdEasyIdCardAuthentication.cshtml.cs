@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.Authentication.eIDEasy.IDCard.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -11,6 +12,7 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account
 {
     public class EIdEasyIdCardAuthentication : PageModel
     {
+        private readonly IAuthenticationPropertiesProvider _authenticationPropertiesProvider;
         private readonly IOptionsMonitor<EIdEasyIdCardOptions> _optionsMonitor;
         private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
         private EIdEasyIdCardOptions _options;
@@ -26,14 +28,15 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
-        public string CardUrl => $"https://{_options.Country}.eideasy.com";
+        public string CardUrl { get; set; }
 
-        public string ClientId => _options.ClientId;
+        public string ClientId { get; set; }
 
-        public EIdEasyIdCardAuthentication(IOptionsMonitor<EIdEasyIdCardOptions> optionsMonitor, IAuthenticationSchemeProvider authenticationSchemeProvider)
+        public EIdEasyIdCardAuthentication(IOptionsMonitor<EIdEasyIdCardOptions> optionsMonitor, IAuthenticationSchemeProvider authenticationSchemeProvider, IAuthenticationPropertiesProvider authenticationPropertiesProvider)
         {
             _optionsMonitor = optionsMonitor;
             _authenticationSchemeProvider = authenticationSchemeProvider;
+            _authenticationPropertiesProvider = authenticationPropertiesProvider;
         }
 
         public override async Task OnPageHandlerSelectionAsync(PageHandlerSelectedContext context)
@@ -41,6 +44,9 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account
             var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
             var authenticationScheme = authenticationSchemes.Single(scheme => scheme.HandlerType == typeof(EIdEasyIdCardHandler));
             _options = _optionsMonitor.Get(authenticationScheme.Name);
+
+            CardUrl = $"https://{_options.Country}.eideasy.com";
+            ClientId = _options.ClientId;
 
             await base.OnPageHandlerSelectionAsync(context);
         }
@@ -56,9 +62,7 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var properties = new AuthenticationProperties { RedirectUri = returnUrl };
-                properties.Items["LoginProvider"] = EIdEasyIdCardDefaults.AuthenticationScheme;
-                properties.SetString("Token", Input.Token);
+                var properties = _authenticationPropertiesProvider.ConfigureProperties(returnUrl, User, Input.Token);
 
                 return new ChallengeResult(EIdEasyIdCardDefaults.AuthenticationScheme, properties);
             }

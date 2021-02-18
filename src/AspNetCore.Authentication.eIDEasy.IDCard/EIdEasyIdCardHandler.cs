@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -36,11 +35,17 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard
 
         protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
         {
+            if (string.IsNullOrEmpty(properties.RedirectUri))
+            {
+                properties.RedirectUri = OriginalPathBase + OriginalPath + Request.QueryString;
+            }
+
             var token = properties.GetString("Token");
 
             if (string.IsNullOrEmpty(token))
             {
-                Context.Response.Redirect("/Identity/Account/EIdEasyIdCardAuthentication");
+                Context.Response.Redirect(
+                    $"/Identity/Account/EIdEasyIdCardAuthentication?returnUrl={UrlEncoder.Default.Encode(properties.RedirectUri)}");
                 return;
             }
 
@@ -49,28 +54,13 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard
 
         private async Task LoginCompletionAsync(string token, AuthenticationProperties properties)
         {
-            try
-            {
-                var userData = await _eIdEasyClient.PostIdCardComplete(token);
+            var userData = await _eIdEasyClient.PostIdCardComplete(token);
 
-                userData.EnsureValid();
+            userData.EnsureValid();
 
-                await Context.SignInAsync(IdentityConstants.ExternalScheme,
-                    new ClaimsPrincipal(userData.GetIdentity()), properties);
-                Context.Response.Redirect("./ExternalLogin?handler=Callback");
-            }
-            catch (EIdEasyTroubleException exception)
-            {
-                Logger.LogError(exception,
-                    "Failed to authenticate ID card");
-                Context.Response.Redirect($"./ExternalLogin?handler=Callback&remoteError={exception.Message}");
-            }
-            catch (HttpRequestException exception)
-            {
-                Logger.LogError(exception, 
-                    "Failed to authenticate ID card");
-                Context.Response.Redirect($"./ExternalLogin?handler=Callback&remoteError={exception.Message}");
-            }
+            await Context.SignInAsync(IdentityConstants.ExternalScheme,
+                new ClaimsPrincipal(userData.GetIdentity()), properties);
+            Context.Response.Redirect(properties.RedirectUri);
         }
     }
 }

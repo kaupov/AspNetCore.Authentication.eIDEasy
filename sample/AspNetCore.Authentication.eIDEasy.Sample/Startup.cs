@@ -39,7 +39,7 @@ namespace AspNetCore.Authentication.eIDEasy.Sample
 
             services.AddAuthentication()
                 .AddEIdEasy(options => options.UseSandbox())
-                .AddEIdEasyIdCard(options =>
+                .AddEIdEasyIdCard<ApplicationUser>(options =>
                 {
                     options.ClientId = Configuration["eIDEasy:ClientId"];
                     options.ClientSecret = Configuration["eIDEasy:ClientSecret"];
