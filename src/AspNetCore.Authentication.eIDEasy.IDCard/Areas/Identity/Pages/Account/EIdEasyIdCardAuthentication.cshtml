@@ -13,18 +13,34 @@
 </form>
 
 <div id="id-card-error" class="alert alert-danger" role="alert">
-    <p>Authentication failed. Please make sure your ID-card reader is connected to your computer and your ID-card is properly in reader.</p>
+    @if (!string.IsNullOrEmpty(Model.RemoteError))
+    {
+        <p>@Model.RemoteError</p>
+    }
+    else
+    {
+        <p>Authentication failed. Please make sure your ID-card reader is connected to your computer and your ID-card is properly in reader.</p>
+    }
     <button id="id-card-retry" class="btn btn-primary">Retry</button>
 </div>
 
 <script>
-    function authenticateEIdEasyIdCard () {
-        var progressElement = document.querySelector('#id-card-progress');
-        var errorElement = document.querySelector('#id-card-error');
+    function showError() {
+        const progressElement = document.querySelector('#id-card-progress');
+        const errorElement = document.querySelector('#id-card-error');
+        errorElement.classList.remove('d-none');
+        progressElement.classList.add('d-none');
+    }
 
+    function showProgress() {
+        const progressElement = document.querySelector('#id-card-progress');
+        const errorElement = document.querySelector('#id-card-error');
         progressElement.classList.remove('d-none');
         errorElement.classList.add('d-none');
+    }
 
+    function authenticateEIdEasyIdCard() {
+        showProgress();
         const xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if (this.readyState === 4) {
@@ -35,13 +51,11 @@
                 document.querySelector('#Input_Token').value = this.response.token;
                 document.querySelector('#token-form').submit();
             } else {
-                errorElement.classList.remove('d-none');
-                progressElement.classList.add('d-none');
+                showError();
             }
         };
         xhr.onerror = function () {
-            errorElement.classList.remove('d-none');
-            progressElement.classList.add('d-none');
+            showError();
         };
         xhr.open('GET', '@Model.CardUrl/api/identity/@Model.ClientId/read-card', true);
         xhr.withCredentials = true;
@@ -54,5 +68,12 @@
         authenticateEIdEasyIdCard();
     };
 
-    authenticateEIdEasyIdCard();
+    @if (string.IsNullOrEmpty(Model.RemoteError))
+    {
+        @:authenticateEIdEasyIdCard();
+    }
+    else
+    {
+        @:showError();
+    }
 </script>

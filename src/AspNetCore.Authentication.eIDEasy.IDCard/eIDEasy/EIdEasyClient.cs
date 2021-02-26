@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -26,7 +28,7 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.eIDEasy
             {
                 Secret = Options.ClientSecret,
                 Token = token,
-                Lang = "et",
+                Lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
                 Country = Options.Country.ToUpperInvariant()
             };
 
@@ -36,7 +38,9 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.eIDEasy
 
             var responseMessage = await _httpClient.PostAsync(uriBuilder.Uri, requestContent);
 
-            responseMessage.EnsureSuccessStatusCode();
+            // Bad request returned in case of errors
+            if (responseMessage.StatusCode != HttpStatusCode.BadRequest)
+                responseMessage.EnsureSuccessStatusCode();
 
             var responseString = await responseMessage.Content.ReadAsStringAsync();
             var userData = JsonSerializer.Deserialize<UserData>(responseString);

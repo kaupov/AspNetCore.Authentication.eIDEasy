@@ -21,6 +21,9 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.eIDEasy
 
         public static void EnsureValid(this UserData userData)
         {
+            if (userData.Status == "error")
+                throw new EIdEasyTroubleException(userData.Message);
+
             if (userData.Status != "OK")
                 throw new EIdEasyTroubleException("Invalid status");
 

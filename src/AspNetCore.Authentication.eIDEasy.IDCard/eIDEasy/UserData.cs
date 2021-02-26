@@ -8,6 +8,9 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.eIDEasy
         [JsonPropertyName("status")]
         public string Status { get; set; }
 
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
+
         [JsonPropertyName("idcode")]
         public string Idcode { get; set; }
 

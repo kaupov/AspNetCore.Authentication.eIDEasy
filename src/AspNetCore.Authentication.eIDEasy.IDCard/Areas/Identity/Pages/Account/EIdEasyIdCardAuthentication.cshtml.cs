@@ -28,6 +28,8 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
+        public string RemoteError { get; set; }
+
         public string CardUrl { get; set; }
 
         public string ClientId { get; set; }
@@ -51,9 +53,10 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard.Areas.Identity.Pages.Account
             await base.OnPageHandlerSelectionAsync(context);
         }
 
-        public void OnGet(string returnUrl = null)
+        public void OnGet(string returnUrl = null, string remoteError = null)
         {
             ReturnUrl = returnUrl ?? Url.Content("~/");
+            RemoteError = remoteError;
         }
 
         public IActionResult OnPost(string returnUrl = null)

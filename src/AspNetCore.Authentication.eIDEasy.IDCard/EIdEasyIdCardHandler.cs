@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -49,7 +50,21 @@ namespace AspNetCore.Authentication.eIDEasy.IDCard
                 return;
             }
 
-            await LoginCompletionAsync(token, properties);
+            try
+            {
+                await LoginCompletionAsync(token, properties);
+            }
+            catch (EIdEasyTroubleException exception)
+            {
+                Context.Response.Redirect(
+                    $"/Identity/Account/EIdEasyIdCardAuthentication?returnUrl={UrlEncoder.Default.Encode(properties.RedirectUri)}&remoteError={UrlEncoder.Default.Encode(exception.Message)}");
+            }
+            catch (HttpRequestException exception)
+            {
+                Logger.LogError(exception, "Unknown error occurred");
+                Context.Response.Redirect(
+                    $"/Identity/Account/EIdEasyIdCardAuthentication?returnUrl={UrlEncoder.Default.Encode(properties.RedirectUri)}&remoteError={UrlEncoder.Default.Encode("Unknown error occurred")}");
+            }
         }
 
         private async Task LoginCompletionAsync(string token, AuthenticationProperties properties)
